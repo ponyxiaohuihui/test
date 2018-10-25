@@ -7,8 +7,8 @@ import java.io.RandomAccessFile;
  */
 public class HugeFileReader {
     public static void main(String[] args) throws Exception {
-        RandomAccessFile file = new RandomAccessFile("C:\\FineReport\\develop\\a.log", "r");
-        RandomAccessFile dest = new RandomAccessFile("C:\\FineReport\\develop\\b.log", "rw");
-        file.getChannel().transferTo(file.length() - 10000000, file.length(), dest.getChannel());
+        RandomAccessFile file = new RandomAccessFile("C:\\FineReport\\output.log", "r");
+        RandomAccessFile dest = new RandomAccessFile("C:\\FineReport\\1.log", "rw");
+        file.getChannel().transferTo(file.length() - 360000000, file.length()- 320000000, dest.getChannel());
     }
 }
