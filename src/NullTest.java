@@ -3,8 +3,6 @@
  */
 public class NullTest {
     public static void main(String[] args) {
-        Integer i = null;
-        Object ob = i == null ? i.intValue() : i.longValue();
-        System.out.println(ob);
+      System.out.println(2==Integer.valueOf(2));
     }
 }

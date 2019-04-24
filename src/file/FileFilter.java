@@ -13,9 +13,9 @@ public class FileFilter {
     private static final String FILTER = "ERROR [com.finebi.cube.common.log.BILogger] ";
     private static final String EXCEPTION =  "java.lang.NullPointerException";
     public static void main(String[] args) throws Exception{
-        File f = new File("C:\\FineReport\\a.log");
+        File f = new File("C:\\FineReport\\A.log");
         BufferedReader reader = new BufferedReader(new FileReader(f));
-        File out = new File("C:\\FineReport\\b.log");
+        File out = new File("C:\\FineReport\\B.log");
         BufferedWriter writer = new BufferedWriter(new FileWriter(out));
         String s;
         String[] result = new String[2];

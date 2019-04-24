@@ -11,8 +11,8 @@ import java.util.Set;
  */
 public class FileCompare {
     public static void main(String[] args) throws IOException {
-        BufferedReader a = new BufferedReader(new FileReader("D:\\a"));
-        BufferedReader b = new BufferedReader(new FileReader("D:\\b"));
+        BufferedReader a = new BufferedReader(new FileReader("D:\\A"));
+        BufferedReader b = new BufferedReader(new FileReader("D:\\B"));
         Set<String> sa = new HashSet<>();
         Set<String> sb = new HashSet<>();
         String s = null;

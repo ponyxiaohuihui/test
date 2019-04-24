@@ -9,7 +9,7 @@ public class SEngine {
     public static void main(String[] args) throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("javascript");
-        engine.eval("var a = 3;");
+        engine.eval("var A = 3;");
         Object ob = engine.get("a");
         System.out.println(ob);
     }

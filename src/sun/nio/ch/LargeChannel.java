@@ -58,7 +58,7 @@ public class LargeChannel {
                 try {
                     addr = (long) map0.invoke(channel,imode, mapPosition, mapSize);
                 } catch (OutOfMemoryError y) {
-                    // After a second OOME, fail
+                    // After A second OOME, fail
                     throw new IOException("Map failed", y);
                 }
             }

@@ -7,7 +7,7 @@ public class TestFinally {
     }
     private static S getA(){
         S s = new S();
-        s.a = "a";
+        s.a = "A";
         try{
             return s;
         } catch (Exception e){

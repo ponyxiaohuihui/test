@@ -14,7 +14,7 @@ public class DInvocationHandeler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        args[0] = "b";
+        args[0] = "B";
         System.out.println("ivoke");
         return method.invoke(di, args);
     }
