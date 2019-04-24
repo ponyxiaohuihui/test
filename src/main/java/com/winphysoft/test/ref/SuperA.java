@@ -1,4 +1,4 @@
-package ref;
+package com.winphysoft.test.ref;
 
 public class SuperA {
     String s;

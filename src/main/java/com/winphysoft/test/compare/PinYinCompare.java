@@ -1,4 +1,4 @@
-package compare;
+package com.winphysoft.test.compare;
 
 import sun.text.UCompactIntArray;
 

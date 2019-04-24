@@ -1,4 +1,4 @@
-package thread.fut;
+package com.winphysoft.test.thread.fut;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;

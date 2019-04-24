@@ -1,4 +1,4 @@
-package loop;
+package com.winphysoft.test.loop;
 
 public class LoopTest {
     private int size(){

@@ -1,4 +1,4 @@
-package method;
+package com.winphysoft.test.method;
 
 public class SubIVisitor {
     public static void visit(I i){

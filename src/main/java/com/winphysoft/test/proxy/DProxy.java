@@ -1,4 +1,4 @@
-package proxy;
+package com.winphysoft.test.proxy;
 
 import java.lang.reflect.Proxy;
 

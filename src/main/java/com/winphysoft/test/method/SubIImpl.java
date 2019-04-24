@@ -1,4 +1,4 @@
-package method;
+package com.winphysoft.test.method;
 
 public class SubIImpl implements SubI {
     @Override

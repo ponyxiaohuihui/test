@@ -1,4 +1,4 @@
-package thread.atom;
+package com.winphysoft.test.thread.atom;
 
 public class PlusTest {
     int num = 0;

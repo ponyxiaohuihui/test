@@ -1,4 +1,4 @@
-package vm;
+package com.winphysoft.test.vm;
 
 import javassist.ClassPool;
 import javassist.CtClass;

@@ -1,6 +1,6 @@
-package vm;
+package com.winphysoft.test.vm;
 
-import vm.anno.A;
+import com.winphysoft.test.vm.anno.A;
 
 public class JavaassistAnno {
     @A

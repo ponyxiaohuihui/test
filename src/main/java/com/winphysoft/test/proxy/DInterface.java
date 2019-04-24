@@ -1,4 +1,4 @@
-package proxy;
+package com.winphysoft.test.proxy;
 
 /**
  * Created by pony on 2018/8/15.

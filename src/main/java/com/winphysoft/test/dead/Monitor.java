@@ -1,4 +1,4 @@
-package dead;
+package com.winphysoft.test.dead;
 
 public class Monitor {
 

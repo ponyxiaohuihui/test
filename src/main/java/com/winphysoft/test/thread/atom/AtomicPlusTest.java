@@ -1,4 +1,4 @@
-package thread.atom;
+package com.winphysoft.test.thread.atom;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

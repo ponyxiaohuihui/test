@@ -1,4 +1,4 @@
-package cls;
+package com.winphysoft.test.cls;
 
 public class MethodOverloadTest {
     public void out(String s, Throwable ob){

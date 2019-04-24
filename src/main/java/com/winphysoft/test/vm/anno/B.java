@@ -1,4 +1,4 @@
-package vm.anno;
+package com.winphysoft.test.vm.anno;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

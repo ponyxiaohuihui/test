@@ -1,4 +1,4 @@
-package file;
+package com.winphysoft.test.file;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package exception;
+package com.winphysoft.test.exception;
 
 /**
  * Created by pony on 2018/10/10.

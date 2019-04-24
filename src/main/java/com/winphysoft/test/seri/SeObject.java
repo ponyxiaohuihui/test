@@ -1,4 +1,4 @@
-package seri;
+package com.winphysoft.test.seri;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

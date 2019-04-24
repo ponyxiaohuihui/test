@@ -1,4 +1,4 @@
-package thread.daemon;
+package com.winphysoft.test.thread.daemon;
 
 public class DaemonTest {
     public static void main(String[] args) {

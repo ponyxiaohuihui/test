@@ -1,4 +1,4 @@
-package array;
+package com.winphysoft.test.array;
 
 import java.util.Random;
 

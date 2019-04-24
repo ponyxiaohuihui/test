@@ -1,4 +1,4 @@
-package bigdecimal;
+package com.winphysoft.test.bigdecimal;
 
 import java.util.Arrays;
 

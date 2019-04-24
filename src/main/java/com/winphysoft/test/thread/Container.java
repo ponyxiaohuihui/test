@@ -1,4 +1,4 @@
-package thread;
+package com.winphysoft.test.thread;
 
 import java.util.List;
 

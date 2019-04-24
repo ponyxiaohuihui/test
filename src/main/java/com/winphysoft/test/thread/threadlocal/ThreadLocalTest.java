@@ -1,4 +1,4 @@
-package thread.threadlocal;
+package com.winphysoft.test.thread.threadlocal;
 
 /**
  * Created by pony on 2018/9/20.

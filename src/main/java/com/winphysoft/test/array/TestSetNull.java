@@ -1,4 +1,4 @@
-package array;
+package com.winphysoft.test.array;
 
 /**
  * Created by pony on 2018/10/10.
