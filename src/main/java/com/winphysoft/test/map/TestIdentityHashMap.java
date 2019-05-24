@@ -1,3 +1,5 @@
+package com.winphysoft.test.map;
+
 import java.util.IdentityHashMap;
 
 /**

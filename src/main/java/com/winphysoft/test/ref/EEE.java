@@ -1,3 +1,5 @@
+package com.winphysoft.test.ref;
+
 import javax.annotation.Generated;
 
 /**

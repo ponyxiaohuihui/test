@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 public class JavaassistTest {
     public static void main(String[] args) throws Exception{
         ClassPool classPool = ClassPool.getDefault();
-        CtClass ctClass = classPool.getCtClass("vm.JavaassistAnno");
+        CtClass ctClass = classPool.getCtClass("com.winphysoft.test.vm.JavaassistAnno");
         for(CtField ctField : ctClass.getDeclaredFields()){
             FieldInfo fieldInfo = ctField.getFieldInfo();
             ConstPool cp = fieldInfo.getConstPool();
