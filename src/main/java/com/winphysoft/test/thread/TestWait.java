@@ -1,3 +1,5 @@
+package com.winphysoft.test.thread;
+
 /**
  * Created by 小灰灰 on 2017/2/15.
  */

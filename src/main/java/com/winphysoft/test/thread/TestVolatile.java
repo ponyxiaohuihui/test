@@ -1,3 +1,5 @@
+package com.winphysoft.test.thread;
+
 public class TestVolatile {
     private  volatile boolean f = false;
     public static void main(String... args) throws InterruptedException {

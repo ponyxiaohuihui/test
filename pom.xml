@@ -14,8 +14,22 @@
             <artifactId>javassist</artifactId>
             <version>3.21.0-GA</version>
         </dependency>
+        <dependency>
+            <groupId>com.fineio</groupId>
+            <artifactId>fineio</artifactId>
+            <version>2.0-RELEASE-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fr.intelligence</groupId>
+            <artifactId>fine-swift</artifactId>
+            <version>10.0-RELEASE-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>black.ninia</groupId>
+            <artifactId>jep</artifactId>
+            <version>3.8.2</version>
+        </dependency>
     </dependencies>
-
     <build>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
         <plugins>
