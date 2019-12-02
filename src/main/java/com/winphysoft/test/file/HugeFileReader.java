@@ -7,9 +7,9 @@ import java.io.RandomAccessFile;
  */
 public class HugeFileReader {
     public static void main(String[] args) throws Exception {
-        RandomAccessFile file = new RandomAccessFile("D:\\file.dat", "r");
-        RandomAccessFile dest = new RandomAccessFile("D:\\1kw.dat", "rw");
-        file.getChannel().transferTo(0 , 1000000000, dest.getChannel());
+        RandomAccessFile file = new RandomAccessFile("C:\\codes\\f.log", "r");
+        RandomAccessFile dest = new RandomAccessFile("C:\\codes\\f3.log", "rw");
+        file.getChannel().transferTo(2000000000 , 10000000, dest.getChannel());
         file.getChannel().close();
         dest.getChannel().close();
         file.close();

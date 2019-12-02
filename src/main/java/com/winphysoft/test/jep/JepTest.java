@@ -6,6 +6,9 @@ import jep.MainInterpreter;
 import jep.NDArray;
 import jep.PyConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JepTest {
     public static void main(String[] args) throws Exception{
         PyConfig pyConfig = new PyConfig();
@@ -20,7 +23,7 @@ public class JepTest {
         jep.runScript("C:\\codes\\pydemo\\jeptest.py");
         System.out.println(jep.getValue("b"));
         System.out.println(jep.getValue("c"));
-
+        List<Long> list = new ArrayList<>();
         jep.close();
     }
 }

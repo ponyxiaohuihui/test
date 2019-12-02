@@ -1,9 +1,12 @@
+package com.winphysoft.test.trycatch;
+
 /**
  * Created by 小灰灰 on 2016/12/20.
  */
 public class TestFinally {
     public static void main(String[] args) {
         System.out.println(getA().a);
+        System.out.println(getIs());
     }
     private static S getA(){
         S s = new S();
@@ -20,5 +23,13 @@ public class TestFinally {
 
     static class S {
         String a;
+    }
+
+    private static boolean getIs(){
+        try {
+            return true;
+        } finally {
+            return false;
+        }
     }
 }

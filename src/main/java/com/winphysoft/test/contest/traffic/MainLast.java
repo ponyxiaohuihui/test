@@ -1,4 +1,4 @@
-package com.winphysoft.test.contest;
+package com.winphysoft.test.contest.traffic;
 
 import java.io.PrintStream;
 import java.io.RandomAccessFile;

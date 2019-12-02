@@ -1,6 +1,7 @@
 package com.winphysoft.test.thread.daemon;
 
 public class DaemonTest {
+
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -8,26 +9,11 @@ public class DaemonTest {
                 e.printStackTrace();
             }
         });
-        Thread thread = new Thread(){
+        Thread thread = new Thread("p"){
             public void run(){
 
-                Thread child = new Thread(){
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                            System.out.println("child1");
-                            Thread.sleep(1000);
-                            System.out.println("child2");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                child.setDaemon(true);
-                child.start();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     System.out.println("thread");
                 } catch (InterruptedException e) {
                 }
@@ -35,6 +21,23 @@ public class DaemonTest {
         };
         thread.start();
         System.out.println("finish");
+        Thread child = new Thread("child"){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                    System.out.println("child1");
+                    Thread.sleep(1000);
+                    System.out.println("child2");
+                    Thread.sleep(100000);
+                    System.out.println("child3");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
 
+        child.setDaemon(true);
+        child.start();
     }
 }

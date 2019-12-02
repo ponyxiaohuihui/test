@@ -3,7 +3,7 @@ package com.winphysoft.test.loop;
 public class LoopTest {
     private int size(){
         System.out.println("size");
-        return 3;
+        return 300000000;
     }
 
     public static void main(String[] args) {

@@ -1,3 +1,5 @@
+package com.winphysoft.test.shift;
+
 import java.util.Random;
 
 /**
