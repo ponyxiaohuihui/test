@@ -1,8 +1,11 @@
 package com.winphysoft.test.contest.fee;
 
 
+import sun.misc.Unsafe;
+
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -33,6 +36,7 @@ public class MainBullet {
         }
         Bullet groupBullet = group.groupToBullet();
         stream.println((int)groupBullet.get(groupBullet.size() / 2));
+        System.out.println(System.currentTimeMillis() - t);
         int middle = groupBullet.size() / 2;
         BulletGroup to = new BulletGroup(8);
         for (int i = 0; i < groupBullet.size(); i++){
@@ -52,6 +56,7 @@ public class MainBullet {
         }
         stream.println(middleBullet.get(leftIndex) >> 32);
         fc.close();
+        System.out.println(System.currentTimeMillis() - t);
         stream.close();
     }
 
@@ -146,30 +151,44 @@ public class MainBullet {
         }
     }
 
-    static class Bullet {
-        private long[][] values;
+    public static final Unsafe UNSAFE;
 
-        private int size = 0;
-        //一个分块的大小
-        private int pageSize = 16;
-        private int pageMode = 0xFFFF;
+    static {
+        Unsafe unsafe;
+        try {
+            Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            unsafe = (Unsafe) unsafeField.get(null);
+        } catch (Throwable cause) {
+            unsafe = null;
+        }
+        UNSAFE = unsafe;
+    }
+
+    static class Bullet {
+        private long address;
+
+        private int size = -1;
+
+        private long maxSize = 1 << 16;
+//        //一个分块的大小
+//        private int pageSize = 16;
+//        private int pageMode = 0xFFFF;
 
         Bullet() {
-            values = new long[256][];
+            address = UNSAFE.allocateMemory(maxSize << 3);
         }
 
         public void add(long value) {
-            int index = size >> pageSize;
-            try {
-                values[size >> pageSize][size++ & pageMode] = value;
-            } catch (Exception e) {
-                values[index] = getArray();
-                values[index][(size - 1) & pageSize] = value;
+            if (size++ > maxSize){
+                maxSize = maxSize << 1;
+                address = UNSAFE.reallocateMemory(address, maxSize << 3);
             }
+            UNSAFE.putLong(address + (size<< 3), value);
         }
 
         public long get(int index) {
-            return values[index >> pageSize][index & pageMode];
+            return UNSAFE.getLong(address + (index << 3));
         }
 
         public int size() {
@@ -177,14 +196,7 @@ public class MainBullet {
         }
 
         public void gc(){
-            for (int i = 0; i < values.length; i++) {
-                if (values[i] != null){
-                    pushArray(values[i]);
-                    values[i] = null;
-                } else {
-                    break;
-                }
-            }
+          //UNSAFE.freeMemory(address);
         }
 
     }

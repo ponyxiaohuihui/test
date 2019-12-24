@@ -38,24 +38,20 @@ public class Fee {
     public static void write() throws Exception {
         Random random = new Random();
         random.ints().iterator();
-        RandomAccessFile file = new RandomAccessFile("C:\\codes\\6.in", "rw");
+        RandomAccessFile file = new RandomAccessFile("C:\\codes\\10.in", "rw");
         FileChannel fc = file.getChannel();
         MappedByteBuffer buffer = fc.map(FileChannel.MapMode.READ_WRITE, 0, 80000004);
         IntBuffer intBuffer = buffer.asIntBuffer();
         intBuffer.put(10000000);
-        PrimitiveIterator.OfInt it = random.ints(9900000, 0, 10000000).iterator();
-        PrimitiveIterator.OfInt fee = random.ints(9900000, 0, 100000000).iterator();
-        for (int i = 0; i < 9900000; i++){
-            intBuffer.put(it.next() * 139);
-            intBuffer.put(fee.next());
-        }
-        for (int j = 0; j < 10; j ++){
-            for (int i = 0; i < 10000; i++){
-                intBuffer.put(i * 135791);
-                intBuffer.put(i*j*10);
+        for (int i = 0; i < 100000; i++){
+            for (int j = 0; j < 100; j++) {
+                intBuffer.put(j + i * 10000);
+                intBuffer.put(j + i * 10000);
             }
         }
+        buffer.force();
         buffer.clear();
+
         fc.close();
     }
 }
