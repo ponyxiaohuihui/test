@@ -1,4 +1,4 @@
-package com.winphysoft.test.unsafe;
+package com.winphysoft.test.vm.unsafe;
 
 import sun.misc.Unsafe;
 
