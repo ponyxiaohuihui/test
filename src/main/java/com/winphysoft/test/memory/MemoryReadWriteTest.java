@@ -10,7 +10,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 public class MemoryReadWriteTest {
     public static void main(String[] args) {
         while (true){
-            arrayWrite();
+            arraysWrite();
         }
     }
 
@@ -28,8 +28,8 @@ public class MemoryReadWriteTest {
     }
 
     public static void arraysWrite() {
-        int I = 1 << 24;
-        int J = 1<< 3;
+        int I = 1 << 17;
+        int J = 1<< 10;
         long[][] arrays = new long[J][];
         for (int i = 0; i < J; i++) {
             arrays[i] = new long[I];
