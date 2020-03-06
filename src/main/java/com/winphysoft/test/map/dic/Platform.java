@@ -9,11 +9,12 @@ public final class Platform {
     public static final int BOOLEAN_ARRAY_OFFSET;
     public static final int BYTE_ARRAY_OFFSET;
     public static final int SHORT_ARRAY_OFFSET;
+    public static final int CHAR_ARRAY_OFFSET;
     public static final int INT_ARRAY_OFFSET;
     public static final int LONG_ARRAY_OFFSET;
     public static final int FLOAT_ARRAY_OFFSET;
     public static final int DOUBLE_ARRAY_OFFSET;
-    public static final int STRING_CHARARRAY_OFFSET;
+    public static final long STRING_CHARARRAY_OFFSET;
     public static final Unsafe _UNSAFE;
 
     static {
@@ -31,10 +32,11 @@ public final class Platform {
             BOOLEAN_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(boolean[].class);
             BYTE_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(byte[].class);
             SHORT_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(short[].class);
+            CHAR_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(char[].class);
+            DOUBLE_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(double[].class);
             INT_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(int[].class);
             LONG_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(long[].class);
             FLOAT_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(float[].class);
-            DOUBLE_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(double[].class);
             int stringOff = 0;
             try {
                 Field f = String.class.getDeclaredField("value");
@@ -43,11 +45,12 @@ public final class Platform {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            STRING_CHARARRAY_OFFSET = stringOff + _UNSAFE.arrayBaseOffset(char[].class);
+            STRING_CHARARRAY_OFFSET = stringOff;
         } else {
             BOOLEAN_ARRAY_OFFSET = 0;
             BYTE_ARRAY_OFFSET = 0;
             SHORT_ARRAY_OFFSET = 0;
+            CHAR_ARRAY_OFFSET = 0;
             INT_ARRAY_OFFSET = 0;
             LONG_ARRAY_OFFSET = 0;
             FLOAT_ARRAY_OFFSET = 0;
