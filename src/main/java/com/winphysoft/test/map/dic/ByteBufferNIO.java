@@ -1,14 +1,11 @@
 package com.winphysoft.test.map.dic;
 
-import sun.misc.Unsafe;
-
-import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Field;
-import java.nio.CharBuffer;
+import java.lang.reflect.Method;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.UUID;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * @author pony
@@ -17,10 +14,13 @@ import java.util.UUID;
  * Created by pony on 2020/3/5
  */
 public class ByteBufferNIO {
+    //抄的bits的
+    private static int JNI_COPY_TO_ARRAY_THRESHOLD = 6;
+    private static int JNI_COPY_TO_CHAR_ARRAY_THRESHOLD = 3;
     private FileChannel fc;
     private int maxSize;
-    private int size;
-    private CharBuffer charBuffer;
+    private MappedByteBuffer byteBuffer;
+    private long address;
 
     public ByteBufferNIO(String path) {
         this(path, Integer.MAX_VALUE);
@@ -29,52 +29,64 @@ public class ByteBufferNIO {
     public ByteBufferNIO(String path, int capacity) {
         try {
             fc = new RandomAccessFile(path, "rw").getChannel();
-            charBuffer = fc.map(FileChannel.MapMode.READ_WRITE, 0, capacity).asCharBuffer();
-            maxSize = charBuffer.capacity();
+            byteBuffer = fc.map(FileChannel.MapMode.READ_WRITE, 0, capacity);
+            Method m = byteBuffer.getClass().getDeclaredMethod("address");
+            m.setAccessible(true);
+            address = (long) m.invoke(byteBuffer);
+            maxSize = byteBuffer.limit();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addString(String s) {
-        char[] stringChars = (char[]) Platform._UNSAFE.getObject(s, Platform.STRING_CHARARRAY_OFFSET);
-        charBuffer.put(stringChars);
+    public void putStringASCharArray(String s, int pos) {
+        char[] stringChars = (char[]) Platform.getObject(s, Platform.STRING_CHAR_ARRAY_OFFSET);
+        if(stringChars.length > JNI_COPY_TO_CHAR_ARRAY_THRESHOLD){
+            Platform.copyMemoryNonOverlap(stringChars, Platform.CHAR_ARRAY_OFFSET, null, address + pos, stringChars.length << 1);
+        } else {
+            for (int i = 0; i < stringChars.length; i++) {
+                Platform.putChar(address + pos + i, stringChars[i]);
+            }
+        }
     }
 
-    public char getChar(int idx) {
-        return charBuffer.get(idx);
+    public char[] getChars(int pos, int len) {
+        char[] stringChars = new char[len];
+        if(stringChars.length > JNI_COPY_TO_CHAR_ARRAY_THRESHOLD){
+            Platform.copyMemoryNonOverlap(null, address + pos, stringChars, Platform.CHAR_ARRAY_OFFSET, stringChars.length << 1);
+        } else {
+            for (int i = 0; i < stringChars.length; i++) {
+                stringChars[i] = Platform.getChar(address + pos + i);
+            }
+        }
+        return stringChars;
     }
 
-//    private void checkSize(int length) {
-//        int lastSize = size;
-//        size += length;
-//        if (size > maxSize) {
-//            int capacity = (size >> 21) + 1 << 21;
-//            try {
-//                charBuffer = fc.map(FileChannel.MapMode.READ_WRITE, 0, capacity).asCharBuffer();
-//                charBuffer.position(lastSize);
-//                maxSize = charBuffer.capacity();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    public void putInt(int i, int pos) {
+        Platform.putInt(address + pos, i);
+    }
 
-    public static void main(String[] args) throws Exception {
-        ByteBufferNIO byteBufferNIO = new ByteBufferNIO("C:\\code\\buf");
-        int idx = 0;
-        long t = System.currentTimeMillis();
-        while (idx++ < 10000000){
-            byteBufferNIO.addString(UUID.randomUUID().toString());
-        }
-        System.out.println(System.currentTimeMillis() - t);
-        t = System.currentTimeMillis();
-        idx = 0;
-        int s = 0;
-        while (idx++ < 10000000 * 16){
-            s += byteBufferNIO.getChar(idx);
-        }
-        System.out.println(s);
-        System.out.println(System.currentTimeMillis() - t);
+    private void force()  {
+        byteBuffer.force();
+    }
+
+    private void release() throws Exception {
+        byteBuffer.force();
+        byteBuffer.clear();
+        fc.close();
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                try {
+                    Method getCleanerMethod = byteBuffer.getClass().getMethod("cleaner");
+                    getCleanerMethod.setAccessible(true);
+                    sun.misc.Cleaner cleaner = (sun.misc.Cleaner)
+                            getCleanerMethod.invoke(byteBuffer);
+                    cleaner.clean();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
     }
 }
