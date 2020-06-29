@@ -11,6 +11,7 @@
     <modules>
         <module>basic</module>
         <module>java_python</module>
+        <module>transport</module>
     </modules>
 
 </project>
