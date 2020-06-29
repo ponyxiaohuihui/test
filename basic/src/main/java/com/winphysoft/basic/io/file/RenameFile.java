@@ -8,8 +8,8 @@ import java.util.List;
 
 public class RenameFile {
     public static void main(String[] args) {
-        String path = "C:\\Finereport\\data\\hdm\\";
-        int start = 1667;
+        String path = "C:\\code\\sss2\\";
+        int start = 2164;
         List<File> files = Arrays.asList(new File(path).listFiles());
         Collections.sort(files, new Comparator<File>() {
             @Override
@@ -32,10 +32,17 @@ public class RenameFile {
 //        return Double.parseDouble(s);
 //    };
 
-    private static Integer getOrder(String s){
-        int idx = s.indexOf('-');
-        int number = Integer.parseInt(s.substring(2, idx));
-        int high = s.charAt(idx + 1) * 100;
-        return high + number;
-    };
+    private static Integer getOrder(String s) {
+        try {
+            int idx = s.indexOf('-');
+            int number = Integer.parseInt(s.substring(idx + 1, idx + 2));
+            int high = Integer.parseInt(s.substring(0, idx)) * 100;
+            return high + number;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    ;
 }
