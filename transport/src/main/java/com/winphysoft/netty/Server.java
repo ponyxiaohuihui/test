@@ -13,22 +13,17 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author pony
  * Created by pony on 2020/6/29
  */
-public class NettyServer {
-    public static void main(String[] args) throws Exception {
-        startServer1();
-    }
+public class Server {
 
-    private static void startServer1() throws Exception {
-        startServer();
-    }
-
-
-    private static void startServer(ChannelHandler... handlers) throws Exception {
+    protected static void startServer(ChannelHandler... handlers) throws Exception {
         EventLoopGroup boss = new NioEventLoopGroup(1);
         EventLoopGroup worker = new NioEventLoopGroup(4);
         try {
