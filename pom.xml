@@ -12,6 +12,7 @@
         <module>basic</module>
         <module>java_python</module>
         <module>transport</module>
+        <module>confluence</module>
     </modules>
 
 </project>
