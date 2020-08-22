@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.huihui.grpc.stream";
+option java_outer_classname = "StreamProto";
+
+package grpc;
+
+service StreamService {
+    rpc BlockBlock (REQ) returns (RES) {
+    }
+    rpc BlockStream (REQ) returns (stream RES) {
+    }
+    rpc StreamBlock (stream REQ) returns (RES) {
+    }
+    rpc StreamStream (stream REQ) returns (stream RES) {
+    }
+}
+
+message REQ{
+    string req = 1;
+}
+
+message RES{
+    string res = 2;
+}

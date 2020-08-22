@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.huihui.grpc.exception";
+option java_outer_classname = "ExceptionProto";
+
+package grpc;
+
+service ExceptionService {
+    rpc Exception (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    }
+    rpc StreamException (stream google.protobuf.Empty) returns (stream google.protobuf.Empty) {
+    }
+}
