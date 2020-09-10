@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.huihui.grpc.zerocopy";
+option java_outer_classname = "ZeroCopy";
+
+package grpc;
+
+service ZeroCopyService {
+    rpc HeapCopy (stream ZeroCopyREQ) returns (stream ZeroCopyRES) {
+    }
+    rpc ZeroCopy (stream ZeroCopyREQ) returns (stream ZeroCopyRES) {
+    }
+}
+
+message ZeroCopyREQ{
+    bytes req = 1;
+}
+
+message ZeroCopyRES{
+    bytes res = 2;
+}
