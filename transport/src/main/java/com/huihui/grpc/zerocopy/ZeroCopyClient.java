@@ -1,11 +1,7 @@
-package com.huihui.zerocopy;
+package com.huihui.grpc.zerocopy;
 
 import com.huihui.grpc.Client;
-import com.huihui.grpc.zerocopy.ZeroCopyREQ;
-import com.huihui.grpc.zerocopy.ZeroCopyRES;
-import com.huihui.grpc.zerocopy.ZeroCopyServiceGrpc;
 import io.grpc.MethodDescriptor;
-import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.ClientCalls;
 import io.grpc.stub.StreamObserver;
 
@@ -22,8 +18,8 @@ public class ZeroCopyClient extends Client {
     }
 
     private static void demo() throws Exception {
-//        heap();
-              zero();
+        heap();
+//              zero();
     }
 
     private static void heap() throws Exception {
@@ -54,7 +50,7 @@ public class ZeroCopyClient extends Client {
                 semaphore.release();
             }
         });
-        ZeroCopyREQ req = ZeroCopyREQ.newBuilder().build();
+        ZeroCopyREQ req = ZeroCopyREQ.newBuilder().setE(EE.b).build();
         int idx = 1111;
         long t = System.currentTimeMillis();
         while (idx-- > 0) {

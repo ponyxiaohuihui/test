@@ -1,4 +1,4 @@
-package com.huihui.zerocopy;
+package com.huihui.grpc.zerocopy;
 
 import io.grpc.internal.CompositeReadableBuffer;
 import io.grpc.internal.ReadableBuffer;

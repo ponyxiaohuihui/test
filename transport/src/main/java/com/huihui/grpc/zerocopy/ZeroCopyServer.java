@@ -1,12 +1,9 @@
-package com.huihui.zerocopy;
+package com.huihui.grpc.zerocopy;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.UnsafeByteOperations;
 import com.huihui.grpc.Server;
-import com.huihui.grpc.zerocopy.ZeroCopyREQ;
-import com.huihui.grpc.zerocopy.ZeroCopyRES;
-import com.huihui.grpc.zerocopy.ZeroCopyServiceGrpc;
 import io.grpc.BindableService;
 import io.grpc.MethodDescriptor;
 import io.grpc.ServerMethodDefinition;

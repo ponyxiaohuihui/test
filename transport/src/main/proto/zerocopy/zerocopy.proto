@@ -15,6 +15,12 @@ service ZeroCopyService {
 
 message ZeroCopyREQ{
     bytes req = 1;
+    EE e = 2;
+}
+
+enum EE{
+    a = 0;
+    b=3;
 }
 
 message ZeroCopyRES{

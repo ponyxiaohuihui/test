@@ -1,6 +1,5 @@
-package com.huihui.zerocopy;
+package com.huihui.grpc.zerocopy;
 
-import com.huihui.grpc.zerocopy.ZeroCopyREQ;
 import io.grpc.MethodDescriptor;
 
 import java.io.InputStream;
