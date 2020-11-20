@@ -15,99 +15,25 @@ import java.util.concurrent.TimeUnit;
  * @author pony
  * Created by pony on 2020/8/20
  */
-public class StreamClient extends Client {
+public class StreamFlowControlClient extends Client {
     public static void main(String[] args) throws Exception {
         startClient();
-//        blockingDemo();
-//        futureDemo();
-//        demo();
         demoFlowControl();
     }
 
-    //BlockingStub只支持BlockBlock, BlockStream两种模式
-    private static void blockingDemo() {
-        StreamServiceGrpc.StreamServiceBlockingStub stub = StreamServiceGrpc.newBlockingStub(channel);
-        System.out.println(stub.blockBlock(REQ.newBuilder().setReq("blockingReqbb").build()));
-        //设置(DeadLine)超时
-        try {
-            stub = StreamServiceGrpc.newBlockingStub(channel).withDeadline(Deadline.after(1, TimeUnit.SECONDS));
-            System.out.println(stub.blockBlock(REQ.newBuilder().setReq("blockingReqbb").build()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        stub = StreamServiceGrpc.newBlockingStub(channel);
-        //client消费速度快与server生产
-        Iterator<RES> resIterator = stub.blockStream(REQ.newBuilder().setReq("blockingReqbsfast").build());
-        long t = System.currentTimeMillis();
-        while (resIterator.hasNext()) {
-            System.out.println("client receive " + resIterator.next() + "cost " + (System.currentTimeMillis() - t));
-            t = System.currentTimeMillis();
-        }
-        //client消费速度慢与server生产
-        Iterator<RES> delayIterator = stub.blockStream(REQ.newBuilder().setReq("blockingReqbslow").build());
-        while (delayIterator.hasNext()) {
-            try {
-                TimeUnit.SECONDS.sleep(10);
-            } catch (InterruptedException e) {
-            }
-            System.out.println("client receive " + delayIterator.next() + "cost" + (System.currentTimeMillis() - t));
-            t = System.currentTimeMillis();
-        }
-    }
-
-    //FutureStub只支持BlockBlock请求
-    private static void futureDemo() throws Exception {
-        StreamServiceGrpc.StreamServiceFutureStub stub = StreamServiceGrpc.newFutureStub(channel);
-        ListenableFuture<RES> bb = stub.blockBlock(REQ.newBuilder().setReq("bb").build());
-        System.out.println(bb.get());
-        //设置(DeadLine)超时
-        try {
-            stub = StreamServiceGrpc.newFutureStub(channel).withDeadline(Deadline.after(1, TimeUnit.SECONDS));
-            System.out.println(stub.blockBlock(REQ.newBuilder().setReq("bb").build()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private static void demo() throws Exception {
-        demobb();
-        demobs();
-        demosb();
-        demoss();
-    }
 
     private static void demoFlowControl() throws Exception {
-        demobbFlowControl();
+//        demobbFlowControl();
+        demobsFlowControl();
+//                demosbFlowControl();
+
     }
-    private static void demobb() throws Exception {
-        StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
-        Semaphore semaphore = new Semaphore(0);
-        stub.blockBlock(REQ.newBuilder().setReq("bb").build(), new StreamObserver<RES>() {
-            long t = System.currentTimeMillis();
-            @Override
-            public void onNext(RES res) {
-                System.out.println("client receive " + res + "cost" + (System.currentTimeMillis() - t));
-                semaphore.release();
-            }
 
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onCompleted() {
-                System.out.println("complete ");
-                semaphore.release();
-            }
-        });
-        semaphore.acquire();
-    }
 
     private static void demobbFlowControl() throws Exception {
         StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
         Semaphore semaphore = new Semaphore(0);
+        //用不到flowcontrol,能走到beforestart，发一个不需要流控，isready一开始是true
         stub.blockBlock(REQ.newBuilder().setReq("bb").build(), new ClientResponseObserver<REQ, RES>() {
 
             private ClientCallStreamObserver clientCallStreamObserver;
@@ -119,9 +45,7 @@ public class StreamClient extends Client {
                 clientCallStreamObserver.setOnReadyHandler(new Runnable() {
                     @Override
                     public void run() {
-                        while (clientCallStreamObserver.isReady()){
-                            clientCallStreamObserver.onNext(REQ.newBuilder().setReq("bb").build());
-                        }
+                        throw new RuntimeException("not here");
                     }
                 });
             }
@@ -130,7 +54,7 @@ public class StreamClient extends Client {
             @Override
             public void onNext(RES res) {
                 System.out.println("client receive " + res + "cost" + (System.currentTimeMillis() - t));
-                // semaphore.release();
+                 semaphore.release();
             }
 
             @Override
@@ -141,21 +65,41 @@ public class StreamClient extends Client {
             @Override
             public void onCompleted() {
                 System.out.println("complete ");
-                // semaphore.release();
+                 semaphore.release();
             }
         });
         semaphore.acquire();
     }
 
 
-    private static void demobs() throws Exception {
+    private static void demobsFlowControl() throws Exception {
         StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
         Semaphore semaphore = new Semaphore(0);
-        stub.blockStream(REQ.newBuilder().setReq("bs").build(), new StreamObserver<RES>() {
+
+        stub.blockStream(REQ.newBuilder().setReq("bs").build(),  new ClientResponseObserver<REQ, RES>() {
+
+            private ClientCallStreamObserver clientCallStreamObserver;
+
+            @Override
+            //只发一个请求，不需发送端流控
+            public void beforeStart(ClientCallStreamObserver clientCallStreamObserver) {
+                this.clientCallStreamObserver = clientCallStreamObserver;
+                clientCallStreamObserver.disableAutoRequestWithInitial(1);
+                clientCallStreamObserver.setOnReadyHandler(new Runnable() {
+                    @Override
+                    public void run() {
+                        throw new RuntimeException("not here");
+                    }
+                });
+            }
+
             long t = System.currentTimeMillis();
             @Override
+            //接收端消费完一个之后再request一个
             public void onNext(RES res) {
                 System.out.println("client receive " + res + "cost" + (System.currentTimeMillis() - t));
+                clientCallStreamObserver.request(1);
+//                semaphore.release();
             }
 
             @Override
@@ -171,7 +115,7 @@ public class StreamClient extends Client {
         });
         semaphore.acquire();
     }
-    private static void demosb() throws Exception {
+    private static void demosbFlowControl() throws Exception {
         StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
         Semaphore semaphore = new Semaphore(0);
 
@@ -204,7 +148,7 @@ public class StreamClient extends Client {
             public void beforeStart(ClientCallStreamObserver<REQ> clientCallStreamObserver) {
 
                 this.clientCallStreamObserver = clientCallStreamObserver;
-                clientCallStreamObserver.disableAutoInboundFlowControl();
+                clientCallStreamObserver.disableAutoRequestWithInitial(1);
                 clientCallStreamObserver.setOnReadyHandler(new Runnable() {
                     @Override
                     public void run() {

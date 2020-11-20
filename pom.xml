@@ -13,6 +13,7 @@
         <module>java_python</module>
         <module>transport</module>
         <module>confluence</module>
+        <module>java_opencl</module>
     </modules>
 
 </project>
