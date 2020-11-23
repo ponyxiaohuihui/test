@@ -1,15 +1,11 @@
 package com.huihui.grpc.stream;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.protobuf.ByteString;
 import com.huihui.grpc.Client;
-import io.grpc.Deadline;
 import io.grpc.stub.ClientCallStreamObserver;
 import io.grpc.stub.ClientResponseObserver;
-import io.grpc.stub.StreamObserver;
 
-import java.util.Iterator;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author pony
@@ -24,8 +20,9 @@ public class StreamFlowControlClient extends Client {
 
     private static void demoFlowControl() throws Exception {
 //        demobbFlowControl();
-        demobsFlowControl();
-//                demosbFlowControl();
+//        demobsFlowControl();
+//        demosbFlowControl();
+        demossFlowControl();
 
     }
 
@@ -36,6 +33,7 @@ public class StreamFlowControlClient extends Client {
         //用不到flowcontrol,能走到beforestart，发一个不需要流控，isready一开始是true
         stub.blockBlock(REQ.newBuilder().setReq("bb").build(), new ClientResponseObserver<REQ, RES>() {
 
+            long t = System.currentTimeMillis();
             private ClientCallStreamObserver clientCallStreamObserver;
 
             @Override
@@ -50,11 +48,10 @@ public class StreamFlowControlClient extends Client {
                 });
             }
 
-            long t = System.currentTimeMillis();
             @Override
             public void onNext(RES res) {
                 System.out.println("client receive " + res + "cost" + (System.currentTimeMillis() - t));
-                 semaphore.release();
+                semaphore.release();
             }
 
             @Override
@@ -65,7 +62,7 @@ public class StreamFlowControlClient extends Client {
             @Override
             public void onCompleted() {
                 System.out.println("complete ");
-                 semaphore.release();
+                semaphore.release();
             }
         });
         semaphore.acquire();
@@ -76,8 +73,9 @@ public class StreamFlowControlClient extends Client {
         StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
         Semaphore semaphore = new Semaphore(0);
 
-        stub.blockStream(REQ.newBuilder().setReq("bs").build(),  new ClientResponseObserver<REQ, RES>() {
+        stub.blockStream(REQ.newBuilder().setReq("bs").build(), new ClientResponseObserver<REQ, RES>() {
 
+            long t = System.currentTimeMillis();
             private ClientCallStreamObserver clientCallStreamObserver;
 
             @Override
@@ -93,7 +91,6 @@ public class StreamFlowControlClient extends Client {
                 });
             }
 
-            long t = System.currentTimeMillis();
             @Override
             //接收端消费完一个之后再request一个
             public void onNext(RES res) {
@@ -115,6 +112,7 @@ public class StreamFlowControlClient extends Client {
         });
         semaphore.acquire();
     }
+
     private static void demosbFlowControl() throws Exception {
         StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
         Semaphore semaphore = new Semaphore(0);
@@ -129,7 +127,6 @@ public class StreamFlowControlClient extends Client {
             public void onNext(RES req) {
                 System.out.println("client receive " + req + "cost" + (System.currentTimeMillis() - t));
                 t = System.currentTimeMillis();
-                clientCallStreamObserver.request(1);
             }
 
             @Override
@@ -152,9 +149,9 @@ public class StreamFlowControlClient extends Client {
                 clientCallStreamObserver.setOnReadyHandler(new Runnable() {
                     @Override
                     public void run() {
-                        while (clientCallStreamObserver.isReady()){
+                        while (clientCallStreamObserver.isReady()) {
                             if (reqCount-- > 0) {
-                                clientCallStreamObserver.onNext(REQ.newBuilder().setReq("ss" + reqCount).build());
+                                clientCallStreamObserver.onNext(REQ.newBuilder().setReq("sb" + reqCount).setData(ByteString.copyFrom(new byte[200000])).build());
                             } else {
                                 clientCallStreamObserver.onCompleted();
                             }
@@ -166,7 +163,8 @@ public class StreamFlowControlClient extends Client {
 
         semaphore.acquire();
     }
-    private static void demoss() throws Exception {
+
+    private static void demossFlowControl() throws Exception {
         StreamServiceGrpc.StreamServiceStub stub = StreamServiceGrpc.newStub(channel);
         Semaphore semaphore = new Semaphore(0);
 
@@ -203,7 +201,7 @@ public class StreamFlowControlClient extends Client {
                 clientCallStreamObserver.setOnReadyHandler(new Runnable() {
                     @Override
                     public void run() {
-                        while (clientCallStreamObserver.isReady()){
+                        while (clientCallStreamObserver.isReady()) {
                             if (reqCount-- > 0) {
                                 clientCallStreamObserver.onNext(REQ.newBuilder().setReq("ss" + reqCount).build());
                             } else {

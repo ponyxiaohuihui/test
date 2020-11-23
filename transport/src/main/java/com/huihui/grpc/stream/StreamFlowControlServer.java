@@ -1,5 +1,6 @@
 package com.huihui.grpc.stream;
 
+import com.google.protobuf.ByteString;
 import com.huihui.grpc.Server;
 import io.grpc.Status;
 import io.grpc.stub.ServerCallStreamObserver;
@@ -29,7 +30,7 @@ public class StreamFlowControlServer extends Server {
             serverCallStreamObserver.disableAutoRequest();
             serverCallStreamObserver.setOnReadyHandler(() -> {
                 RES res = RES.newBuilder().setRes(request.getReq()).build();
-                System.out.println("server bb response : " + res);
+                System.out.println("server bb response : " + res.getRes());
                 responseObserver.onNext(res);
                 // 只能onNext一次，要不client端会报错,需要多次onNext,则走BS模式
                 //    responseObserver.onNext(res);
@@ -40,7 +41,7 @@ public class StreamFlowControlServer extends Server {
 
         public void blockBlockFinal(REQ request, StreamObserver<RES> responseObserver) {
             RES res = RES.newBuilder().setRes(request.getReq()).build();
-            System.out.println("server bb response : " + res);
+            System.out.println("server bb response : " + res.getRes());
             responseObserver.onNext(res);
             // 只能onNext一次，要不client端会报错,需要多次onNext,则走BS模式
             //    responseObserver.onNext(res);
@@ -54,38 +55,41 @@ public class StreamFlowControlServer extends Server {
         }
 
         public void blockStreamFlowControl(REQ request, StreamObserver<RES> responseObserver) {
-            int idx = 0;
             ServerCallStreamObserver serverCallStreamObserver = (ServerCallStreamObserver) responseObserver;
             serverCallStreamObserver.disableAutoRequest();
             StringBuilder sb  = new StringBuilder();
-            for (int i = 0; i < 5000; i++) {
+            for (int i = 0; i < 50000; i++) {
                 sb.append(i);
             }
-            final String tag = sb.toString();
+            final String data = sb.toString();
             class OnReadyHandler implements Runnable {
                 long t = System.currentTimeMillis();
                 int idx = 0;
                 @Override
                 public void run() {
-                    if (idx == 5){
-                        serverCallStreamObserver.onCompleted();
-                    }
                     while (serverCallStreamObserver.isReady() && idx ++ < 5) {
                         System.out.println("blockStream ready");
-                        RES res = RES.newBuilder().setRes(request.getReq() + idx + tag).build();
-                        System.out.println("server bs response : " + res + "cost " + (System.currentTimeMillis() - t));
+                        RES res = RES.newBuilder().setRes(request.getReq() + idx).setData(ByteString.copyFromUtf8(data)).build();
+                        System.out.println("server bs response : " + res.getRes() + "cost " + (System.currentTimeMillis() - t));
+                        serverCallStreamObserver.onNext(res);
                         t = System.currentTimeMillis();
+                    }
+                    if (idx == 6){
+                        serverCallStreamObserver.onCompleted();
                     }
                 }
             }
             final OnReadyHandler onReadyHandler = new OnReadyHandler();
             serverCallStreamObserver.setOnReadyHandler(onReadyHandler);
-            serverCallStreamObserver.onCompleted();
         }
 
 
         @Override
         public StreamObserver<REQ> streamBlock(StreamObserver<RES> responseObserver) {
+            return streamBlockFlowControl(responseObserver);
+        }
+
+        public StreamObserver<REQ> streamBlockFlowControl(StreamObserver<RES> responseObserver) {
             ServerCallStreamObserver serverCallStreamObserver = (ServerCallStreamObserver) responseObserver;
             serverCallStreamObserver.disableAutoInboundFlowControl();
 

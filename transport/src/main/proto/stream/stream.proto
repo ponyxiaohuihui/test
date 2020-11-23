@@ -20,8 +20,10 @@ service StreamService {
 
 message REQ{
     string req = 1;
+    bytes data = 2;
 }
 
 message RES{
-    string res = 2;
+    string res = 1;
+    bytes data = 2;
 }
