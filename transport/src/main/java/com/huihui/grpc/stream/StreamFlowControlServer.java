@@ -91,7 +91,7 @@ public class StreamFlowControlServer extends Server {
 
         public StreamObserver<REQ> streamBlockFlowControl(StreamObserver<RES> responseObserver) {
             ServerCallStreamObserver serverCallStreamObserver = (ServerCallStreamObserver) responseObserver;
-            serverCallStreamObserver.disableAutoInboundFlowControl();
+            serverCallStreamObserver.disableAutoRequest();
 
             class OnReadyHandler implements Runnable {
                 private boolean wasReady = false;
@@ -138,7 +138,7 @@ public class StreamFlowControlServer extends Server {
         @Override
         public StreamObserver<REQ> streamStream(StreamObserver<RES> responseObserver) {
             ServerCallStreamObserver serverCallStreamObserver = (ServerCallStreamObserver) responseObserver;
-            serverCallStreamObserver.disableAutoInboundFlowControl();
+            serverCallStreamObserver.disableAutoRequest();
 
             class OnReadyHandler implements Runnable {
                 private boolean wasReady = false;
@@ -160,11 +160,10 @@ public class StreamFlowControlServer extends Server {
                 @Override
                 public void onNext(REQ req) {
                     try {
-                        System.out.println("ss receive req " + req);
-                        Thread.sleep(2000);
-                        RES res = RES.newBuilder().setRes(req.getReq() + idx++).build();
+                        System.out.println("ss receive req " + req.getReq());
+                        RES res = RES.newBuilder().setRes(req.getReq() + idx++).setData(ByteString.copyFrom(new byte[200000])).build();
                         responseObserver.onNext(res);
-                        System.out.println("ss send res " + res);
+                        System.out.println("ss send res " + res.getRes());
                         if (serverCallStreamObserver.isReady()) {
                             serverCallStreamObserver.request(1);
                         } else {

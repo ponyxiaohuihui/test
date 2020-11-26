@@ -176,7 +176,7 @@ public class StreamFlowControlClient extends Client {
 
             @Override
             public void onNext(RES req) {
-                System.out.println("client receive " + req + "cost" + (System.currentTimeMillis() - t));
+                System.out.println("client receive " + req.getRes() + "cost" + (System.currentTimeMillis() - t));
                 t = System.currentTimeMillis();
                 clientCallStreamObserver.request(1);
             }
@@ -197,13 +197,13 @@ public class StreamFlowControlClient extends Client {
             public void beforeStart(ClientCallStreamObserver<REQ> clientCallStreamObserver) {
 
                 this.clientCallStreamObserver = clientCallStreamObserver;
-                clientCallStreamObserver.disableAutoInboundFlowControl();
+                clientCallStreamObserver.disableAutoRequestWithInitial(1);
                 clientCallStreamObserver.setOnReadyHandler(new Runnable() {
                     @Override
                     public void run() {
                         while (clientCallStreamObserver.isReady()) {
                             if (reqCount-- > 0) {
-                                clientCallStreamObserver.onNext(REQ.newBuilder().setReq("ss" + reqCount).build());
+                                clientCallStreamObserver.onNext(REQ.newBuilder().setReq("ss" + reqCount).setData(ByteString.copyFrom(new byte[200000])).build());
                             } else {
                                 clientCallStreamObserver.onCompleted();
                             }
