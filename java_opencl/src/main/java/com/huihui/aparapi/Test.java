@@ -3,52 +3,49 @@ package com.huihui.aparapi;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
-import java.util.Random;
 
 /**
  * @author pony
  * Created by pony on 2020/11/20
  */
 public class Test {
+    static int  SIZE = 64 * 1024 * 1024;
     public static void main(String[] args) {
-        final float a[] = new float[100000000];
-        final float b[] = new float[100000000];
-        final float[] result = new float[a.length];
-        Random rand = new Random();
+        final int a[] = new int[SIZE];
+        final int b[] = new int[SIZE];
+        final int[] result = new int[a.length];
         for (int i = 0; i < a.length; i++) {
-            a[i] = rand.nextFloat();
-            b[i] = rand.nextFloat();
+                a[i] = i;
+                b[i] = i;
         }
-        //runKernel(a, b, result);
+        runKernel(a, b, result);
         runCpu(a, b, result);
     }
 
-    public static void runCpu(float[] a, float[] b, float[] result) {
+    public static void runCpu(int[] a, int[] b, int[] result) {
         long t = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 5; i++) {
             for (int j = 0; j < result.length; j++) {
-                result[j] = a[j] + b[j];
+                    result[j] = a[j] + b[j];
             }
-            System.out.println(result[0]);
-            System.out.println("cost " + (System.currentTimeMillis() - t));
+            System.out.println("java cpu cost " + (System.currentTimeMillis() - t) + " ms");
             t = System.currentTimeMillis();
         }
     }
 
-    public static void runKernel(final float[] a, final float[] b, final float[] result) {
+    public static void runKernel(final int[] a, final int[] b, final int[] result) {
         long t = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
-            Kernel kernel = new Kernel() {
-                @Override
-                public void run() {
-                    int i = getGlobalId();
-                    result[i] = a[i] + b[i];
-                }
-            };
-            Range range = Range.create(result.length);
+        Kernel kernel = new Kernel() {
+            @Override
+            public void run() {
+                int i = getGlobalId();
+                result[i] = a[i] + b[i];
+            }
+        };
+        for (int i = 0; i < 5; i++) {
+            Range range = Range.create(SIZE, 64);
             kernel.execute(range);
-            System.out.println(result[0]);
-            System.out.println("cost " + (System.currentTimeMillis() - t));
+            System.out.println("java oc cost " + (System.currentTimeMillis() - t)  + " ms");
             t = System.currentTimeMillis();
         }
     }

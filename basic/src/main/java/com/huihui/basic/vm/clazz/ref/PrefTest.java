@@ -19,12 +19,13 @@ public class PrefTest {
 
     public PrefTest(int id) {
         this.id = id;
-        this.cleaner = Cleaner.create(this, new PrefCleaner(id));
+       // this.cleaner = Cleaner.create(this, new PrefCleaner(id));
     }
 
     public static void main(String[] args) throws Exception {
-        cleanerPref();
+//        cleanerPref();
 //        copyRef();
+        myPref();
     }
 
     private static void copyRef() throws Exception {
@@ -74,7 +75,7 @@ public class PrefTest {
                                     .getDeclaredField("referent");
                             rereferent.setAccessible(true);
                             Object result = rereferent.get(ob);
-                            System.out.println(result);
+                            System.out.println("release " + result);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
